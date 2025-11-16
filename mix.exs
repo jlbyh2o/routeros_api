@@ -16,10 +16,7 @@ defmodule RouterosApi.MixProject do
       docs: docs(),
       dialyzer: dialyzer(),
       name: "RouterOS API",
-      source_url: @source_url,
-      # Disable Erlang type optimization to work around Elixir 1.17/1.18 type checker bug
-      # with telemetry library. See: https://github.com/elixir-lang/elixir/issues
-      erlc_options: [:debug_info, :no_type_opt]
+      source_url: @source_url
     ]
   end
 
