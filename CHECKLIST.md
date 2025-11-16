@@ -51,21 +51,24 @@
 - [x] Add typespecs
 - [ ] Write integration tests (deferred - need mock server)
 
-### 1.5 Response Parsing ⏳
-- [ ] Create `lib/routeros_api/response.ex`
-- [ ] Implement sentence parsing
-- [ ] Implement attribute parsing (`=key=value`)
-- [ ] Implement status handling (!done, !trap, !fatal)
-- [ ] Implement type coercion (boolean, etc.)
-- [ ] Add typespecs
-- [ ] Write unit tests
+### 1.5 Response Parsing ✅
+- [x] Create `lib/routeros_api/response.ex`
+- [x] Implement sentence parsing
+- [x] Implement attribute parsing (`=key=value`)
+- [x] Implement status handling (!done, !trap, !fatal)
+- [x] Implement type coercion (boolean, etc.)
+- [x] Add typespecs
+- [x] Write unit tests
+- [x] Integrate with Connection module
+- [x] Handle mixed status/data sentences
 
-### 1.6 Error Handling ⏳
-- [ ] Create `lib/routeros_api/error.ex`
-- [ ] Define error struct
-- [ ] Add error types (:trap, :fatal, :timeout, :closed)
-- [ ] Implement error formatting
-- [ ] Add typespecs
+### 1.6 Error Handling ✅
+- [x] Create `lib/routeros_api/error.ex`
+- [x] Define error struct
+- [x] Add error types (:trap, :fatal, :timeout, :closed, :auth_failed, :connection_failed)
+- [x] Implement error formatting
+- [x] Add typespecs
+- [x] Implement Exception behaviour
 
 ### 1.7 Public API ⏳
 - [ ] Create `lib/routeros_api.ex`

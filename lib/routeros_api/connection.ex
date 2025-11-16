@@ -34,7 +34,7 @@ defmodule RouterosApi.Connection do
   use GenServer
   require Logger
 
-  alias RouterosApi.{Auth, Protocol, Error}
+  alias RouterosApi.{Auth, Protocol, Response, Error}
 
   @default_timeout 5000
   @default_plain_port 8728
@@ -214,10 +214,9 @@ defmodule RouterosApi.Connection do
 
   defp execute_command(socket, words) do
     with :ok <- Protocol.write_sentence(socket, words),
-         {:ok, sentences} <- Protocol.read_block(socket) do
-      # Return raw sentences for now
-      # Response parsing will be added in Phase 1.5
-      {:ok, sentences}
+         {:ok, sentences} <- Protocol.read_block(socket),
+         {:ok, data} <- Response.parse(sentences) do
+      {:ok, data}
     else
       {:error, reason} ->
         {:error, reason}
