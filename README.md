@@ -9,14 +9,17 @@ Elixir client for MikroTik RouterOS binary API. Supports both plain TCP (port 87
 ## Features
 
 - ✅ Plain TCP connections (port 8728)
-- ✅ TLS/SSL connections (port 8729)
-- ✅ MD5 challenge-response authentication
-- ✅ Response parsing to Elixir maps
+- ✅ TLS/SSL connections (port 8729) with self-signed certificate support
+- ✅ RouterOS 7.x authentication (plain text)
+- ✅ RouterOS 6.x authentication (MD5 challenge-response fallback)
+- ✅ Response parsing to Elixir maps with type coercion
 - ✅ Synchronous command execution
-- ✅ Custom port support
-- ✅ Certificate verification options
+- ✅ Query filters support
 - ✅ Connection pooling with NimblePool
-- ✅ Telemetry integration
+- ✅ Telemetry integration for monitoring
+- ✅ Helper functions for common operations
+- ✅ Type-safe with Dialyzer
+- ✅ Comprehensive test coverage (109 tests)
 
 ## Installation
 
@@ -25,7 +28,17 @@ Add `routeros_api` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:routeros_api, "~> 0.1.0"}
+    {:routeros_api, "~> 0.2.0"}
+  ]
+end
+```
+
+Or from GitHub:
+
+```elixir
+def deps do
+  [
+    {:routeros_api, github: "jlbyh2o/routeros_api"}
   ]
 end
 ```
@@ -64,20 +77,22 @@ RouterosApi.disconnect(conn)
 ### Secure Connection (TLS)
 
 ```elixir
-# Auto-detect TLS from port
+# Auto-detect TLS from port 8729
 {:ok, conn} = RouterosApi.connect(%{
   host: "192.168.88.1",
-  port: 8729,  # TLS port
+  port: 8729,  # TLS port - auto-detected
   username: "admin",
-  password: "password"
+  password: "password",
+  ssl_opts: [verify: :verify_none]  # For self-signed certificates
 })
 
-# Or explicit TLS connection
-{:ok, conn} = RouterosApi.connect_tls(%{
+# Or explicit TLS with certificate verification
+{:ok, conn} = RouterosApi.connect(%{
   host: "192.168.88.1",
   port: 8729,
   username: "admin",
   password: "password",
+  ssl: true,
   ssl_opts: [
     verify: :verify_peer,
     cacertfile: "/path/to/ca.pem"
@@ -85,19 +100,23 @@ RouterosApi.disconnect(conn)
 })
 ```
 
-### Self-Signed Certificates (Lab/Testing)
+### Self-Signed Certificates
+
+For lab/testing environments with self-signed certificates:
 
 ```elixir
-{:ok, conn} = RouterosApi.connect_tls(%{
+{:ok, conn} = RouterosApi.connect(%{
   host: "192.168.88.1",
   port: 8729,
   username: "admin",
   password: "password",
   ssl_opts: [
-    verify: :verify_none  # NOT recommended for production
+    verify: :verify_none  # Disables certificate verification
   ]
 })
 ```
+
+**Note:** `verify: :verify_none` should only be used in lab/testing environments. For production, use proper certificates and `verify: :verify_peer`.
 
 ## Usage Examples
 
@@ -146,56 +165,55 @@ end
 
 ## Configuration
 
-### Custom Ports
+### Connection Options
 
-```elixir
-# Custom plain TCP port
-{:ok, conn} = RouterosApi.connect_plain(%{
-  host: "router.example.com",
-  port: 9999,
-  username: "admin",
-  password: "password"
-})
-
-# Custom TLS port
-{:ok, conn} = RouterosApi.connect_tls(%{
-  host: "router.example.com",
-  port: 9998,
-  username: "admin",
-  password: "password"
-})
-```
-
-### Timeouts
+All connection options:
 
 ```elixir
 {:ok, conn} = RouterosApi.connect(%{
-  host: "192.168.88.1",
-  username: "admin",
-  password: "password",
-  timeout: 10_000  # 10 seconds
+  host: "192.168.88.1",        # Required: Router hostname or IP
+  port: 8728,                  # Optional: Port (default: 8728 for TCP, 8729 for TLS)
+  username: "admin",           # Required: RouterOS username
+  password: "password",        # Required: RouterOS password
+  timeout: 5000,               # Optional: Connection timeout in ms (default: 5000)
+  ssl: false,                  # Optional: Force TLS (auto-detected from port)
+  ssl_opts: []                 # Optional: SSL options (e.g., verify: :verify_none)
 })
 ```
 
 ### Connection Pooling
 
-For production use, use connection pooling:
+For production use with multiple concurrent requests, use connection pooling:
 
 ```elixir
 # In your application.ex
-children = [
-  {RouterosApi.Pool, [
-    name: :main_router,
-    host: "192.168.88.1",
-    username: "admin",
-    password: "password",
-    pool_size: 10
-  ]}
-]
+def start(_type, _args) do
+  children = [
+    {RouterosApi.Pool, [
+      name: :main_router,
+      host: "192.168.88.1",
+      port: 8729,                    # Optional: Use TLS
+      username: "admin",
+      password: "password",
+      pool_size: 10,                 # Number of connections in pool
+      ssl_opts: [verify: :verify_none]  # For self-signed certs
+    ]}
+  ]
 
-# In your code
+  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+  Supervisor.start_link(children, opts)
+end
+
+# In your code - use pool name instead of connection PID
 {:ok, interfaces} = RouterosApi.command(:main_router, ["/interface/print"])
+{:ok, resource} = RouterosApi.Helpers.get_system_resource(:main_router)
 ```
+
+**Benefits of pooling:**
+- Handles concurrent requests efficiently
+- Automatic connection health checks
+- Connection recovery on failures
+- Supervised connections
 
 ### Telemetry
 
@@ -278,25 +296,139 @@ alias RouterosApi.Helpers
 
 All helpers work with both direct connections and connection pools.
 
+## Authentication
+
+The library automatically handles authentication for different RouterOS versions:
+
+### RouterOS 7.x and 6.43+ (Plain Text)
+
+Modern RouterOS versions use plain text authentication:
+
+```elixir
+# The library automatically detects and uses plain text auth
+{:ok, conn} = RouterosApi.connect(%{
+  host: "192.168.88.1",
+  username: "admin",
+  password: "password"
+})
+```
+
+### RouterOS pre-6.43 (MD5 Challenge-Response)
+
+Older RouterOS versions use MD5 challenge-response authentication. The library automatically falls back to this method if plain text authentication fails:
+
+```elixir
+# Same code works - automatic fallback
+{:ok, conn} = RouterosApi.connect(%{
+  host: "192.168.88.1",
+  username: "admin",
+  password: "password"
+})
+```
+
+**Note:** The authentication method is automatically detected and handled. You don't need to specify which method to use.
+
+## Troubleshooting
+
+### Connection Issues
+
+**"Connection refused"**
+- Ensure the API service is enabled on the router: `/ip service print`
+- Check that the correct port is being used (8728 for TCP, 8729 for TLS)
+- Verify firewall rules allow connections to the API port
+
+**"Authentication failed"**
+- Verify username and password are correct
+- Check that the user has API access permissions
+- For RouterOS 7.x, ensure you're using the correct authentication method (automatic)
+
+**SSL/TLS Certificate Errors**
+- For self-signed certificates, use `ssl_opts: [verify: :verify_none]`
+- For production, use proper certificates and `verify: :verify_peer`
+- Ensure the API-SSL service is enabled: `/ip service print`
+
+### Performance
+
+**Slow Commands**
+- Use connection pooling for concurrent requests
+- Monitor with telemetry events
+- Check network latency to the router
+
+**Connection Timeouts**
+- Increase timeout: `timeout: 10_000` (10 seconds)
+- Check router CPU usage
+- Verify network connectivity
+
 ## Documentation
 
 Full documentation is available at [https://hexdocs.pm/routeros_api](https://hexdocs.pm/routeros_api).
 
-## Roadmap
+## Testing
 
-### v0.1.0 (Current - MVP)
-- [x] Binary protocol implementation
-- [x] TCP and TLS connections
-- [x] MD5 authentication
-- [x] Response parsing
-- [x] Basic documentation
+The library includes comprehensive test coverage:
 
-### v1.0.0 (Production Ready)
-- [ ] Connection pooling with NimblePool
-- [ ] Telemetry integration
-- [ ] Helper functions for common operations
-- [ ] Comprehensive documentation
-- [ ] CI/CD pipeline
+```bash
+# Run unit tests only
+mix test
+
+# Run all tests including integration tests
+mix test --include integration --include ssl_integration
+
+# Run with coverage
+mix test --cover
+
+# Run Dialyzer type checking
+mix dialyzer
+
+# Run code quality checks
+mix credo --strict
+```
+
+**Test Coverage:**
+- 109 tests (all passing)
+- Unit tests for all modules
+- Integration tests with real RouterOS device
+- SSL/TLS integration tests
+- Connection pooling tests
+- Telemetry tests
+- Helper function tests
+
+## Compatibility
+
+**Tested with:**
+- Elixir 1.14 - 1.18
+- OTP 25 - 28
+- RouterOS 7.12.1 (stable)
+- RouterOS 6.x (MD5 auth fallback)
+
+**Supported RouterOS versions:**
+- RouterOS 7.x (plain text authentication)
+- RouterOS 6.43+ (plain text authentication)
+- RouterOS pre-6.43 (MD5 authentication fallback)
+
+## Development
+
+### Quality Tools
+
+The project uses several tools to maintain code quality:
+
+- **Dialyzer** - Static type checking
+- **Credo** - Code quality and consistency
+- **ExDoc** - Documentation generation
+- **GitHub Actions** - Automated CI/CD
+
+### Running Quality Checks
+
+```bash
+# Format code
+mix format
+
+# Check formatting
+mix format --check-formatted
+
+# Run all quality checks
+mix test && mix dialyzer && mix credo
+```
 
 ## Contributing
 
