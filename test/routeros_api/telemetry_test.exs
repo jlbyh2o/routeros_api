@@ -51,13 +51,17 @@ defmodule RouterosApi.TelemetryTest do
       {:ok, conn} = RouterosApi.connect(config)
 
       # Should receive connection start event
-      assert_receive {:telemetry_event, [:routeros_api, :connection, :start], measurements, metadata}
+      assert_receive {:telemetry_event, [:routeros_api, :connection, :start], measurements,
+                      metadata}
+
       assert is_integer(measurements.system_time)
       assert metadata.host == @host
       assert metadata.port == @port
 
       # Should receive connection stop event
-      assert_receive {:telemetry_event, [:routeros_api, :connection, :stop], measurements, metadata}
+      assert_receive {:telemetry_event, [:routeros_api, :connection, :stop], measurements,
+                      metadata}
+
       assert is_integer(measurements.duration)
       assert metadata.host == @host
 
@@ -66,7 +70,8 @@ defmodule RouterosApi.TelemetryTest do
 
     test "emits connection exception on failure" do
       config = %{
-        host: "192.0.2.1",  # Invalid host
+        # Invalid host
+        host: "192.0.2.1",
         port: 8728,
         username: "admin",
         password: "password",
@@ -77,7 +82,8 @@ defmodule RouterosApi.TelemetryTest do
       result = RouterosApi.connect(config)
 
       # Should receive connection start
-      assert_receive {:telemetry_event, [:routeros_api, :connection, :start], _measurements, _metadata}
+      assert_receive {:telemetry_event, [:routeros_api, :connection, :start], _measurements,
+                      _metadata}
 
       # Should receive connection exception
       case result do
@@ -146,10 +152,13 @@ defmodule RouterosApi.TelemetryTest do
       {:error, _} = RouterosApi.command(conn, ["/invalid/command"])
 
       # Should receive command start
-      assert_receive {:telemetry_event, [:routeros_api, :command, :start], _measurements, _metadata}
+      assert_receive {:telemetry_event, [:routeros_api, :command, :start], _measurements,
+                      _metadata}
 
       # Should receive command exception
-      assert_receive {:telemetry_event, [:routeros_api, :command, :exception], measurements, metadata}
+      assert_receive {:telemetry_event, [:routeros_api, :command, :exception], measurements,
+                      metadata}
+
       assert is_integer(measurements.duration)
       assert metadata.command == "/invalid/command"
 
@@ -165,4 +174,3 @@ defmodule RouterosApi.TelemetryTest do
     end
   end
 end
-

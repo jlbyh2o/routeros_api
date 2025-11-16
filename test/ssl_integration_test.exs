@@ -160,7 +160,8 @@ defmodule RouterosApi.SslIntegrationTest do
       if Process.alive?(conn) do
         case RouterosApi.command(conn, ["/system/identity/print"]) do
           {:ok, _} -> :ok
-          {:error, _} -> :ok  # Connection might be closed after fatal error
+          # Connection might be closed after fatal error
+          {:error, _} -> :ok
         end
       end
 
@@ -267,4 +268,3 @@ defmodule RouterosApi.SslIntegrationTest do
     end
   end
 end
-

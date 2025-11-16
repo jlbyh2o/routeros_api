@@ -57,6 +57,7 @@ defmodule RouterosApi.PoolTest do
 
       # All should succeed
       assert length(results) == 10
+
       Enum.each(results, fn {_i, result} ->
         assert is_list(result)
       end)
@@ -138,4 +139,3 @@ defmodule RouterosApi.PoolTest do
     end
   end
 end
-

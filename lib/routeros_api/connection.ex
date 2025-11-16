@@ -114,7 +114,11 @@ defmodule RouterosApi.Connection do
       ssl: state.ssl
     }
 
-    :telemetry.execute([:routeros_api, :connection, :start], %{system_time: System.system_time()}, metadata)
+    :telemetry.execute(
+      [:routeros_api, :connection, :start],
+      %{system_time: System.system_time()},
+      metadata
+    )
 
     # Connect and authenticate
     case connect_and_auth(state) do
@@ -152,7 +156,11 @@ defmodule RouterosApi.Connection do
       port: state.port
     }
 
-    :telemetry.execute([:routeros_api, :command, :start], %{system_time: System.system_time()}, metadata)
+    :telemetry.execute(
+      [:routeros_api, :command, :start],
+      %{system_time: System.system_time()},
+      metadata
+    )
 
     case execute_command(state.socket, words) do
       {:ok, result} ->

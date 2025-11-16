@@ -163,4 +163,3 @@ defmodule RouterosApi.Helpers do
     RouterosApi.command(conn, ["/system/reboot"])
   end
 end
-

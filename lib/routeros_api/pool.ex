@@ -109,7 +109,11 @@ defmodule RouterosApi.Pool do
       command: List.first(words)
     }
 
-    :telemetry.execute([:routeros_api, :pool, :checkout], %{system_time: System.system_time()}, metadata)
+    :telemetry.execute(
+      [:routeros_api, :pool, :checkout],
+      %{system_time: System.system_time()},
+      metadata
+    )
 
     result =
       NimblePool.checkout!(
@@ -189,4 +193,3 @@ defmodule RouterosApi.Pool do
     {:ok, conn_config}
   end
 end
-

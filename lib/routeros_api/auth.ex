@@ -96,7 +96,6 @@ defmodule RouterosApi.Auth do
     end
   end
 
-
   # Verifies that the login was successful.
   # Checks for !done (success) or !trap (failure).
   @spec verify_login_success([[binary()]]) ::
@@ -136,7 +135,6 @@ defmodule RouterosApi.Auth do
         {:error, :unknown_login_response}
     end
   end
-
 
   @doc """
   Extracts the salt from the login response.

@@ -186,7 +186,8 @@ defmodule RouterosApi.Response do
       Enum.member?(sentence, "!done") -> :done
       Enum.member?(sentence, "!trap") -> :trap
       Enum.member?(sentence, "!fatal") -> :fatal
-      Enum.member?(sentence, "!re") -> false  # !re means reply/data, not a status
+      # !re means reply/data, not a status
+      Enum.member?(sentence, "!re") -> false
       true -> nil
     end
   end

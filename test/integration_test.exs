@@ -100,7 +100,8 @@ defmodule RouterosApi.IntegrationTest do
       Process.flag(:trap_exit, true)
 
       config = %{
-        host: "192.0.2.1",  # TEST-NET-1
+        # TEST-NET-1
+        host: "192.0.2.1",
         username: "admin",
         password: "password",
         timeout: 1000
@@ -157,6 +158,7 @@ defmodule RouterosApi.IntegrationTest do
       assert Map.has_key?(first_interface, "type")
 
       IO.puts("✓ Found #{length(interfaces)} interfaces")
+
       Enum.each(interfaces, fn iface ->
         IO.puts("  - #{iface["name"]} (#{iface["type"]})")
       end)
@@ -169,6 +171,7 @@ defmodule RouterosApi.IntegrationTest do
       assert is_list(addresses)
 
       IO.puts("✓ Found #{length(addresses)} IP addresses")
+
       Enum.each(addresses, fn addr ->
         IO.puts("  - #{addr["address"]} on #{addr["interface"]}")
       end)
@@ -307,4 +310,3 @@ defmodule RouterosApi.IntegrationTest do
     end
   end
 end
-

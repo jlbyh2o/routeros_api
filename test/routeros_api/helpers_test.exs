@@ -131,4 +131,3 @@ defmodule RouterosApi.HelpersTest do
     end
   end
 end
-
