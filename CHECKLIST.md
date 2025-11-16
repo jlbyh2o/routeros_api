@@ -70,17 +70,18 @@
 - [x] Add typespecs
 - [x] Implement Exception behaviour
 
-### 1.7 Public API ⏳
-- [ ] Create `lib/routeros_api.ex`
-- [ ] Implement `connect/1`
-- [ ] Implement `connect_plain/1`
-- [ ] Implement `connect_tls/1`
-- [ ] Implement `disconnect/1`
-- [ ] Implement `command/2`
-- [ ] Implement `command!/2`
-- [ ] Add @moduledoc and @doc
-- [ ] Add typespecs
-- [ ] Write integration tests
+### 1.7 Public API ✅
+- [x] Create `lib/routeros_api.ex`
+- [x] Implement `connect/1`
+- [x] Implement `connect_plain/1`
+- [x] Implement `connect_tls/1`
+- [x] Implement `disconnect/1`
+- [x] Implement `command/2`
+- [x] Implement `command!/2`
+- [x] Add @moduledoc and @doc
+- [x] Add typespecs
+- [x] Write API tests
+- [x] Comprehensive documentation with examples
 
 ### 1.8 Testing ⏳
 - [ ] Create mock MikroTik server in `test/support/`
