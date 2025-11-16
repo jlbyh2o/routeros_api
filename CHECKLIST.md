@@ -130,14 +130,15 @@
 - [x] Test concurrent requests
 - [x] Test error handling in pool
 
-### 2.2 Telemetry ⏳
-- [ ] Add `telemetry` dependency
-- [ ] Add connection events
-- [ ] Add command events
-- [ ] Add pool events
-- [ ] Add metadata to events
-- [ ] Write telemetry tests
-- [ ] Document telemetry usage
+### 2.2 Telemetry ✅
+- [x] Add `telemetry` dependency
+- [x] Add connection events (start, stop, exception)
+- [x] Add command events (start, stop, exception)
+- [x] Add pool events (checkout, checkin)
+- [x] Add metadata to events (host, port, command, duration, etc.)
+- [x] Write telemetry tests (4 tests passing)
+- [x] Document telemetry usage in README
+- [x] Example telemetry handler in README
 
 ### 2.3 Helper Functions ⏳
 - [ ] Implement `list_interfaces/1`

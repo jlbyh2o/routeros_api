@@ -105,23 +105,76 @@ defmodule RouterosApi.Connection do
     # Parse and validate configuration
     state = parse_config(config)
 
+    # Emit connection start event
+    start_time = System.monotonic_time()
+
+    metadata = %{
+      host: state.host,
+      port: state.port,
+      ssl: state.ssl
+    }
+
+    :telemetry.execute([:routeros_api, :connection, :start], %{system_time: System.system_time()}, metadata)
+
     # Connect and authenticate
     case connect_and_auth(state) do
       {:ok, socket} ->
+        duration = System.monotonic_time() - start_time
+
+        :telemetry.execute(
+          [:routeros_api, :connection, :stop],
+          %{duration: duration},
+          metadata
+        )
+
         {:ok, %{state | socket: socket}}
 
       {:error, reason} ->
+        duration = System.monotonic_time() - start_time
+
+        :telemetry.execute(
+          [:routeros_api, :connection, :exception],
+          %{duration: duration},
+          Map.put(metadata, :reason, reason)
+        )
+
         {:stop, reason}
     end
   end
 
   @impl true
   def handle_call({:command, words}, _from, state) do
+    start_time = System.monotonic_time()
+
+    metadata = %{
+      command: List.first(words),
+      host: state.host,
+      port: state.port
+    }
+
+    :telemetry.execute([:routeros_api, :command, :start], %{system_time: System.system_time()}, metadata)
+
     case execute_command(state.socket, words) do
       {:ok, result} ->
+        duration = System.monotonic_time() - start_time
+
+        :telemetry.execute(
+          [:routeros_api, :command, :stop],
+          %{duration: duration, result_count: length(result)},
+          metadata
+        )
+
         {:reply, {:ok, result}, state}
 
       {:error, reason} ->
+        duration = System.monotonic_time() - start_time
+
+        :telemetry.execute(
+          [:routeros_api, :command, :exception],
+          %{duration: duration},
+          Map.put(metadata, :reason, reason)
+        )
+
         {:reply, {:error, reason}, state}
     end
   end

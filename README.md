@@ -14,8 +14,8 @@ Elixir client for MikroTik RouterOS binary API. Supports both plain TCP (port 87
 - ✅ Synchronous command execution
 - ✅ Custom port support
 - ✅ Certificate verification options
-- 🚧 Connection pooling (coming in v1.0)
-- 🚧 Telemetry integration (coming in v1.0)
+- ✅ Connection pooling with NimblePool
+- ✅ Telemetry integration
 
 ## Installation
 
@@ -174,6 +174,72 @@ end
   password: "password",
   timeout: 10_000  # 10 seconds
 })
+```
+
+### Connection Pooling
+
+For production use, use connection pooling:
+
+```elixir
+# In your application.ex
+children = [
+  {RouterosApi.Pool, [
+    name: :main_router,
+    host: "192.168.88.1",
+    username: "admin",
+    password: "password",
+    pool_size: 10
+  ]}
+]
+
+# In your code
+{:ok, interfaces} = RouterosApi.command(:main_router, ["/interface/print"])
+```
+
+### Telemetry
+
+The library emits telemetry events for monitoring:
+
+**Connection Events:**
+- `[:routeros_api, :connection, :start]` - Connection attempt started
+- `[:routeros_api, :connection, :stop]` - Connection successful
+- `[:routeros_api, :connection, :exception]` - Connection failed
+
+**Command Events:**
+- `[:routeros_api, :command, :start]` - Command execution started
+- `[:routeros_api, :command, :stop]` - Command completed successfully
+- `[:routeros_api, :command, :exception]` - Command failed
+
+**Pool Events:**
+- `[:routeros_api, :pool, :checkout]` - Connection checked out from pool
+- `[:routeros_api, :pool, :checkin]` - Connection returned to pool
+
+Example telemetry handler:
+
+```elixir
+:telemetry.attach_many(
+  "routeros-api-handler",
+  [
+    [:routeros_api, :command, :stop],
+    [:routeros_api, :command, :exception]
+  ],
+  &MyApp.Telemetry.handle_event/4,
+  nil
+)
+
+defmodule MyApp.Telemetry do
+  require Logger
+
+  def handle_event([:routeros_api, :command, :stop], measurements, metadata, _config) do
+    if measurements.duration > 1_000_000_000 do
+      Logger.warning("Slow RouterOS command: #{metadata.command} (#{measurements.duration}ns)")
+    end
+  end
+
+  def handle_event([:routeros_api, :command, :exception], _measurements, metadata, _config) do
+    Logger.error("RouterOS command failed: #{metadata.command} - #{inspect(metadata.reason)}")
+  end
+end
 ```
 
 ## Documentation

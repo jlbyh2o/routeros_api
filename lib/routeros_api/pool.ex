@@ -102,14 +102,34 @@ defmodule RouterosApi.Pool do
       {:ok, result} = RouterosApi.Pool.command(:my_pool, ["/interface/print"])
   """
   def command(pool_name, words) when is_atom(pool_name) and is_list(words) do
-    NimblePool.checkout!(
-      pool_name,
-      :checkout,
-      fn _from, conn ->
-        result = Connection.command(conn, words)
-        {result, conn}
-      end
+    start_time = System.monotonic_time()
+
+    metadata = %{
+      pool: pool_name,
+      command: List.first(words)
+    }
+
+    :telemetry.execute([:routeros_api, :pool, :checkout], %{system_time: System.system_time()}, metadata)
+
+    result =
+      NimblePool.checkout!(
+        pool_name,
+        :checkout,
+        fn _from, conn ->
+          result = Connection.command(conn, words)
+          {result, conn}
+        end
+      )
+
+    duration = System.monotonic_time() - start_time
+
+    :telemetry.execute(
+      [:routeros_api, :pool, :checkin],
+      %{duration: duration},
+      metadata
     )
+
+    result
   end
 
   ## NimblePool Callbacks
