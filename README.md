@@ -242,6 +242,41 @@ defmodule MyApp.Telemetry do
 end
 ```
 
+### Helper Functions
+
+The library provides convenient helper functions for common operations:
+
+```elixir
+alias RouterosApi.Helpers
+
+# List all interfaces
+{:ok, interfaces} = Helpers.list_interfaces(conn)
+
+# Get specific interface
+{:ok, interface} = Helpers.get_interface(conn, "ether1")
+
+# List IP addresses
+{:ok, addresses} = Helpers.list_ip_addresses(conn)
+
+# Add IP address
+{:ok, _} = Helpers.add_ip_address(conn, "192.168.1.1/24", "ether1")
+
+# Get system information
+{:ok, resource} = Helpers.get_system_resource(conn)
+
+# Get/set router identity
+{:ok, identity} = Helpers.get_identity(conn)
+{:ok, _} = Helpers.set_identity(conn, "MyRouter")
+
+# List firewall rules
+{:ok, rules} = Helpers.list_firewall_rules(conn)
+
+# List DHCP leases
+{:ok, leases} = Helpers.list_dhcp_leases(conn)
+```
+
+All helpers work with both direct connections and connection pools.
+
 ## Documentation
 
 Full documentation is available at [https://hexdocs.pm/routeros_api](https://hexdocs.pm/routeros_api).

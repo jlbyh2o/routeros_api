@@ -140,14 +140,21 @@
 - [x] Document telemetry usage in README
 - [x] Example telemetry handler in README
 
-### 2.3 Helper Functions ⏳
-- [ ] Implement `list_interfaces/1`
-- [ ] Implement `get_interface/2`
-- [ ] Implement `list_ip_addresses/1`
-- [ ] Implement `list_routes/1`
-- [ ] Implement `get_system_resource/1`
-- [ ] Add tests for helpers
-- [ ] Document helpers
+### 2.3 Helper Functions ✅
+- [x] Implement `list_interfaces/1`
+- [x] Implement `get_interface/2`
+- [x] Implement `list_ip_addresses/1`
+- [x] Implement `add_ip_address/3`
+- [x] Implement `remove_ip_address/2`
+- [x] Implement `get_system_resource/1`
+- [x] Implement `get_identity/1`
+- [x] Implement `set_identity/2`
+- [x] Implement `list_firewall_rules/1`
+- [x] Implement `list_dhcp_leases/1`
+- [x] Implement `reboot/1`
+- [x] Add tests for helpers (10 tests passing)
+- [x] Document helpers in README
+- [x] Test helpers with pools
 
 ### 2.4 CI/CD ⏳
 - [ ] Create `.github/workflows/ci.yml`
