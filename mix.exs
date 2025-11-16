@@ -62,7 +62,7 @@ defmodule RouterosApi.MixProject do
   defp docs do
     [
       main: "RouterosApi",
-      extras: ["README.md", "CHANGELOG.md"],
+      extras: ["README.md", "CHANGELOG.md", "LICENSE"],
       source_ref: "v#{@version}",
       source_url: @source_url
     ]
