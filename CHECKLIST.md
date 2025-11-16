@@ -12,17 +12,19 @@
 - [x] Add CHANGELOG.md
 - [x] Verify compilation works
 
-### 1.2 Protocol Implementation ⏳
-- [ ] Create `lib/routeros_api/protocol.ex`
-- [ ] Implement `encode_length/1`
-- [ ] Implement `decode_length/1`
-- [ ] Implement `write_word/2`
-- [ ] Implement `read_word/1`
-- [ ] Implement `write_sentence/2`
-- [ ] Implement `read_sentence/1`
-- [ ] Implement `read_block/1`
-- [ ] Add typespecs
-- [ ] Write unit tests for protocol
+### 1.2 Protocol Implementation ✅
+- [x] Create `lib/routeros_api/protocol.ex`
+- [x] Implement `encode_length/1`
+- [x] Implement `decode_length/1`
+- [x] Implement `write_word/2`
+- [x] Implement `read_word/1`
+- [x] Implement `write_sentence/2`
+- [x] Implement `read_sentence/1`
+- [x] Implement `read_block/1`
+- [x] Add typespecs
+- [x] Write unit tests for protocol
+- [x] Import Bitwise for bitwise operations
+- [x] Handle both :gen_tcp and :ssl sockets
 
 ### 1.3 Authentication ⏳
 - [ ] Create `lib/routeros_api/auth.ex`
