@@ -97,11 +97,8 @@ defmodule RouterosApi.Auth do
   end
 
 
-  @doc """
-  Verifies that the login was successful.
-
-  Checks for !done (success) or !trap (failure).
-  """
+  # Verifies that the login was successful.
+  # Checks for !done (success) or !trap (failure).
   @spec verify_login_success([[String.t()]]) :: :ok | {:error, term()}
   defp verify_login_success(sentences) do
     # Check if any sentence has !done

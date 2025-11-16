@@ -80,9 +80,9 @@ defmodule RouterosApi do
       ])
   """
 
-  alias RouterosApi.Connection
+  alias RouterosApi.{Connection, Pool}
 
-  @type connection :: pid()
+  @type connection :: pid() | atom()
   @type config :: %{
           required(:host) => String.t(),
           required(:username) => String.t(),
@@ -188,10 +188,16 @@ defmodule RouterosApi do
   Commands are specified as a list of words (strings).
   Returns `{:ok, data}` on success or `{:error, reason}` on failure.
 
+  Accepts either a connection PID or a pool name (atom).
+
   ## Examples
 
-      # List all interfaces
+      # With direct connection
+      {:ok, conn} = RouterosApi.connect(%{...})
       {:ok, interfaces} = RouterosApi.command(conn, ["/interface/print"])
+
+      # With connection pool
+      {:ok, interfaces} = RouterosApi.command(:my_pool, ["/interface/print"])
 
       # Get specific interface
       {:ok, [interface]} = RouterosApi.command(conn, [
@@ -207,8 +213,12 @@ defmodule RouterosApi do
       ])
   """
   @spec command(connection(), [String.t()]) :: {:ok, [map()]} | {:error, term()}
-  def command(conn, words) when is_list(words) do
+  def command(conn, words) when is_pid(conn) and is_list(words) do
     Connection.command(conn, words)
+  end
+
+  def command(pool_name, words) when is_atom(pool_name) and is_list(words) do
+    Pool.command(pool_name, words)
   end
 
   @doc """
