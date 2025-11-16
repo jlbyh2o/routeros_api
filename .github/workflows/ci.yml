@@ -14,17 +14,11 @@ jobs:
     strategy:
       matrix:
         elixir: ['1.14', '1.15', '1.16', '1.17', '1.18']
-        otp: ['25', '26', '27', '28']
+        otp: ['25', '26', '27']
         exclude:
           # Exclude incompatible combinations
           - elixir: '1.14'
             otp: '27'
-          - elixir: '1.14'
-            otp: '28'
-          - elixir: '1.15'
-            otp: '28'
-          - elixir: '1.16'
-            otp: '28'
           - elixir: '1.17'
             otp: '25'
           - elixir: '1.18'
@@ -74,7 +68,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.18'
-          otp-version: '28'
+          otp-version: '27'
       
       - name: Restore dependencies cache
         uses: actions/cache@v4
@@ -112,7 +106,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.18'
-          otp-version: '28'
+          otp-version: '27'
       
       - name: Restore dependencies cache
         uses: actions/cache@v4
@@ -143,7 +137,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           elixir-version: '1.18'
-          otp-version: '28'
+          otp-version: '27'
       
       - name: Restore dependencies cache
         uses: actions/cache@v4
