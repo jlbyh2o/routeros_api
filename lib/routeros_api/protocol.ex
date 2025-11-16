@@ -37,15 +37,15 @@ defmodule RouterosApi.Protocol do
   end
 
   def encode_length(len) when len < 0x4000 do
-    <<0x80 ||| (len >>> 8), len &&& 0xFF>>
+    <<0x80 ||| len >>> 8, len &&& 0xFF>>
   end
 
   def encode_length(len) when len < 0x200000 do
-    <<0xC0 ||| (len >>> 16), (len >>> 8) &&& 0xFF, len &&& 0xFF>>
+    <<0xC0 ||| len >>> 16, len >>> 8 &&& 0xFF, len &&& 0xFF>>
   end
 
   def encode_length(len) when len < 0x10000000 do
-    <<0xE0 ||| (len >>> 24), (len >>> 16) &&& 0xFF, (len >>> 8) &&& 0xFF, len &&& 0xFF>>
+    <<0xE0 ||| len >>> 24, len >>> 16 &&& 0xFF, len >>> 8 &&& 0xFF, len &&& 0xFF>>
   end
 
   @doc """
@@ -65,16 +65,16 @@ defmodule RouterosApi.Protocol do
     end
   end
 
-  # 1 byte length
-  defp decode_length_bytes(_socket, byte) when (byte &&& 0xE0) == 0x00 do
+  # 1 byte length (0x00 - 0x7F)
+  defp decode_length_bytes(_socket, byte) when byte < 0x80 do
     {:ok, byte}
   end
 
-  # 2 byte length
-  defp decode_length_bytes(socket, byte) when (byte &&& 0xC0) == 0x80 do
+  # 2 byte length (0x80 - 0xBF)
+  defp decode_length_bytes(socket, byte) when byte >= 0x80 and byte < 0xC0 do
     case recv(socket, 1) do
       {:ok, <<second>>} ->
-        len = ((byte &&& 0x3F) <<< 8) ||| second
+        len = (byte &&& 0x3F) <<< 8 ||| second
         {:ok, len}
 
       {:error, reason} ->
@@ -82,11 +82,11 @@ defmodule RouterosApi.Protocol do
     end
   end
 
-  # 3 byte length
-  defp decode_length_bytes(socket, byte) when (byte &&& 0xE0) == 0xC0 do
+  # 3 byte length (0xC0 - 0xDF)
+  defp decode_length_bytes(socket, byte) when byte >= 0xC0 and byte < 0xE0 do
     case recv(socket, 2) do
       {:ok, <<second, third>>} ->
-        len = ((byte &&& 0x1F) <<< 16) ||| (second <<< 8) ||| third
+        len = (byte &&& 0x1F) <<< 16 ||| second <<< 8 ||| third
         {:ok, len}
 
       {:error, reason} ->
@@ -94,11 +94,11 @@ defmodule RouterosApi.Protocol do
     end
   end
 
-  # 4 byte length
-  defp decode_length_bytes(socket, byte) when (byte &&& 0xF0) == 0xE0 do
+  # 4 byte length (0xE0 - 0xEF)
+  defp decode_length_bytes(socket, byte) when byte >= 0xE0 and byte < 0xF0 do
     case recv(socket, 3) do
       {:ok, <<second, third, fourth>>} ->
-        len = ((byte &&& 0x0F) <<< 24) ||| (second <<< 16) ||| (third <<< 8) ||| fourth
+        len = (byte &&& 0x0F) <<< 24 ||| second <<< 16 ||| third <<< 8 ||| fourth
         {:ok, len}
 
       {:error, reason} ->
@@ -166,7 +166,6 @@ defmodule RouterosApi.Protocol do
   defp socket_send({:sslsocket, _, _} = socket, data), do: :ssl.send(socket, data)
   defp socket_send(socket, data), do: :gen_tcp.send(socket, data)
 
-
   @doc """
   Reads a sentence from the socket.
 
@@ -201,6 +200,10 @@ defmodule RouterosApi.Protocol do
 
       {:ok, "!fatal"} ->
         read_sentence(socket, ["!fatal" | acc], :fatal)
+
+      {:ok, "!re"} ->
+        # !re means "reply" - data follows, not a final status
+        read_sentence(socket, ["!re" | acc], false)
 
       {:ok, word} ->
         read_sentence(socket, [word | acc], status)
@@ -237,9 +240,7 @@ defmodule RouterosApi.Protocol do
     end
   end
 
-
   # Helper to receive data (handles both :gen_tcp and :ssl)
   defp recv({:sslsocket, _, _} = socket, len), do: :ssl.recv(socket, len)
   defp recv(socket, len), do: :gen_tcp.recv(socket, len)
 end
-

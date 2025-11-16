@@ -173,4 +173,3 @@ defmodule RouterosApi.ResponseTest do
     end
   end
 end
-

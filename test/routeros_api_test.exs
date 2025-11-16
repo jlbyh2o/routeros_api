@@ -34,10 +34,12 @@ defmodule RouterosApiTest do
       Process.flag(:trap_exit, true)
 
       config = %{
-        host: "192.0.2.1",  # TEST-NET-1, should timeout
+        # TEST-NET-1, should timeout
+        host: "192.0.2.1",
         username: "test",
         password: "test",
-        timeout: 100  # Short timeout for test
+        # Short timeout for test
+        timeout: 100
       }
 
       # GenServer will exit during init

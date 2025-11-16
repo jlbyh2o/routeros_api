@@ -131,4 +131,3 @@ defmodule RouterosApi.AuthTest do
     end
   end
 end
-

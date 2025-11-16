@@ -106,4 +106,3 @@ defmodule RouterosApi.ProtocolTest do
     end
   end
 end
-

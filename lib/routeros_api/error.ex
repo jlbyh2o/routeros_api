@@ -51,4 +51,3 @@ defmodule RouterosApi.Error do
     "RouterOS API Error (#{type}): #{msg}"
   end
 end
-
