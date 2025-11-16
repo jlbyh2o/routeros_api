@@ -26,13 +26,16 @@
 - [x] Import Bitwise for bitwise operations
 - [x] Handle both :gen_tcp and :ssl sockets
 
-### 1.3 Authentication ⏳
-- [ ] Create `lib/routeros_api/auth.ex`
-- [ ] Implement MD5 hash calculation
-- [ ] Implement salt extraction
-- [ ] Implement login sequence
-- [ ] Add typespecs
-- [ ] Write unit tests for auth
+### 1.3 Authentication ✅
+- [x] Create `lib/routeros_api/auth.ex`
+- [x] Implement MD5 hash calculation
+- [x] Implement salt extraction
+- [x] Implement login sequence
+- [x] Add typespecs
+- [x] Write unit tests for auth
+- [x] Hex to binary conversion
+- [x] Binary to hex conversion
+- [x] Handle empty salt (newer RouterOS)
 
 ### 1.4 Connection Management ⏳
 - [ ] Create `lib/routeros_api/connection.ex`

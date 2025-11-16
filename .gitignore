@@ -21,3 +21,6 @@ routeros_api-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# VSCode
+.vscode/
