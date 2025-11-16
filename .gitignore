@@ -1,29 +1,80 @@
-# The directory Mix will write compiled artifacts to.
+# Mix artifacts
 /_build/
-
-# If you run "mix test --cover", coverage assets end up here.
-/cover/
-
-# The directory Mix downloads your dependencies sources to.
 /deps/
-
-# Where third-party dependencies like ExDoc output generated docs.
-/doc/
-
-# If the VM crashes, it generates a dump, let's ignore it too.
-erl_crash.dump
-
-# Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
-# Ignore package tarball (built via "mix hex.build").
-routeros_api-*.tar
+# Generate on crash by the VM
+erl_crash.dump
 
-# Temporary files, for example, from tests.
-/tmp/
+# Generate on crash by NPM
+npm-debug.log
+
+# Static artifacts
+/assets/node_modules/
+
+# Since we are building assets from assets/,
+# we ignore priv/static. You may want to comment
+# this depending on your deployment strategy.
+/priv/static/
+
+# Files matching config/*.secret.exs pattern contain sensitive
+# data and you should not commit them into version control.
+#
+# Alternatively, you may comment the line below and commit the
+# secrets files as long as you replace their contents by environment
+# variables.
+/config/*.secret.exs
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test coverage
+/cover/
+/coveralls.json
+
+# Documentation
+/doc/
+
+# Hex package tarball
+routeros_api-*.tar
 
 # Dialyzer PLT files
 /priv/plts/
+*.plt
+*.plt.hash
 
-# VSCode
+# Editor directories and files
 .vscode/
+.idea/
+*.iml
+.elixir_ls/
+.lexical/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+/logs/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary test files
+/tmp/
+
+# Development/debug scripts
+debug.exs
+test_simple.exs
+scratch.exs
