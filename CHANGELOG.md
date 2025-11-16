@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Dialyzer Integration**
+  - Type checking with dialyxir
+  - PLT caching for faster checks
+  - All type warnings resolved
+
+- **Code Quality Tools**
+  - Credo for code quality checks
+  - GitHub Actions CI/CD workflow
+  - Test matrix for Elixir 1.14-1.18 and OTP 25-28
+  - Automated Dialyzer and Credo checks
+  - Format checking in CI
+
+### Changed
+- Renamed `is_status_word?/1` to `status_word?/1` (better predicate naming)
+- Fixed alias ordering in Connection module
+- Improved type specifications
+
 ## [0.2.0] - 2025-01-16
 
 ### Added

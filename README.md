@@ -1,5 +1,6 @@
 # RouterOS API
 
+[![CI](https://github.com/jlbyh2o/routeros_api/actions/workflows/ci.yml/badge.svg)](https://github.com/jlbyh2o/routeros_api/actions/workflows/ci.yml)
 [![Hex.pm](https://img.shields.io/hexpm/v/routeros_api.svg)](https://hex.pm/packages/routeros_api)
 [![Documentation](https://img.shields.io/badge/documentation-gray)](https://hexdocs.pm/routeros_api)
 
