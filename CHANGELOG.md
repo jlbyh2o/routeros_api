@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-01-16
+## [0.2.0] - 2025-01-16
 
 ### Added
 - **Connection Pooling** with NimblePool
@@ -39,22 +39,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tested with RouterOS 7.12.1
 
 - **Comprehensive Testing**
-  - 100 tests (all passing)
+  - 109 tests (all passing)
   - Integration tests with real router
+  - SSL/TLS integration tests
   - Pool tests
   - Telemetry tests
   - Helper function tests
 
+- **SSL/TLS Support**
+  - Full TLS/SSL connection support
+  - Self-signed certificate support
+  - Tested with RouterOS 7.12.1 on port 8729
+  - Connection pooling works with TLS
+  - All helpers work over TLS
+
 ### Changed
-- Updated to production-ready status (v1.0.0)
 - Enhanced error handling and reporting
 - Improved documentation with more examples
 - Updated README with pooling and telemetry examples
+- More conservative versioning (0.2.0 instead of 1.0.0)
 
 ### Fixed
 - Protocol length decoding for all byte ranges
 - Reply sentence (!re) handling
 - Authentication compatibility with RouterOS 7.x
+- SSL socket handling in Protocol module (send/recv)
 
 ## [0.1.0] - 2025-01-15
 
@@ -70,6 +79,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Boolean type coercion
 - Comprehensive documentation
 
-[1.0.0]: https://github.com/jlbyh2o/routeros_api/compare/v0.1.0...v1.0.0
+[0.2.0]: https://github.com/jlbyh2o/routeros_api/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/jlbyh2o/routeros_api/releases/tag/v0.1.0
 

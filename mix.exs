@@ -1,7 +1,7 @@
 defmodule RouterosApi.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "0.2.0"
   @source_url "https://github.com/jlbyh2o/routeros_api"
 
   def project do
@@ -38,9 +38,9 @@ defmodule RouterosApi.MixProject do
 
   defp description do
     """
-    Production-ready Elixir client for MikroTik RouterOS binary API with connection pooling,
-    telemetry, and helper functions. Supports RouterOS 6.x and 7.x with both MD5 and plain
-    text authentication.
+    Elixir client for MikroTik RouterOS binary API with connection pooling, telemetry,
+    and helper functions. Supports RouterOS 6.x and 7.x with both MD5 and plain text
+    authentication over TCP and TLS.
     """
   end
 

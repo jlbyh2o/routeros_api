@@ -113,6 +113,8 @@
 - [x] Fix any compiler warnings
 - [x] Review all code
 - [x] Test with real RouterOS 7.12.1 device
+- [x] SSL/TLS integration tests (9 tests passing)
+- [x] Test with self-signed certificate
 
 ---
 

@@ -163,6 +163,7 @@ defmodule RouterosApi.Protocol do
   end
 
   # Helper to send data (handles both :gen_tcp and :ssl)
+  defp socket_send({:sslsocket, _, _, _, _, _, _, _} = socket, data), do: :ssl.send(socket, data)
   defp socket_send({:sslsocket, _, _} = socket, data), do: :ssl.send(socket, data)
   defp socket_send(socket, data), do: :gen_tcp.send(socket, data)
 
@@ -241,6 +242,7 @@ defmodule RouterosApi.Protocol do
   end
 
   # Helper to receive data (handles both :gen_tcp and :ssl)
+  defp recv({:sslsocket, _, _, _, _, _, _, _} = socket, len), do: :ssl.recv(socket, len)
   defp recv({:sslsocket, _, _} = socket, len), do: :ssl.recv(socket, len)
   defp recv(socket, len), do: :gen_tcp.recv(socket, len)
 end
