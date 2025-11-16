@@ -1,0 +1,64 @@
+defmodule RouterosApi.MixProject do
+  use Mix.Project
+
+  @version "0.1.0-dev"
+  @source_url "https://github.com/YOUR_USERNAME/routeros_api"
+
+  def project do
+    [
+      app: :routeros_api,
+      version: @version,
+      elixir: "~> 1.14",
+      start_permanent: Mix.env() == :prod,
+      deps: deps(),
+      description: description(),
+      package: package(),
+      docs: docs(),
+      name: "RouterOS API",
+      source_url: @source_url
+    ]
+  end
+
+  # Run "mix help compile.app" to learn about applications.
+  def application do
+    [
+      extra_applications: [:logger, :crypto, :ssl],
+      mod: {RouterosApi.Application, []}
+    ]
+  end
+
+  # Run "mix help deps" to learn about dependencies.
+  defp deps do
+    [
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
+    ]
+  end
+
+  defp description do
+    """
+    Elixir client for MikroTik RouterOS binary API. Supports both plain TCP (port 8728)
+    and TLS (port 8729) connections with MD5 authentication.
+    """
+  end
+
+  defp package do
+    [
+      name: "routeros_api",
+      files: ~w(lib .formatter.exs mix.exs README.md LICENSE CHANGELOG.md),
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => @source_url,
+        "Changelog" => "#{@source_url}/blob/main/CHANGELOG.md"
+      }
+    ]
+  end
+
+  defp docs do
+    [
+      main: "RouterosApi",
+      extras: ["README.md", "CHANGELOG.md"],
+      source_ref: "v#{@version}",
+      source_url: @source_url
+    ]
+  end
+end
