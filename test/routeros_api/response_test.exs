@@ -128,18 +128,18 @@ defmodule RouterosApi.ResponseTest do
     end
   end
 
-  describe "is_status_word?/1" do
+  describe "status_word?/1" do
     test "identifies status words" do
-      assert Response.is_status_word?("!done") == true
-      assert Response.is_status_word?("!trap") == true
-      assert Response.is_status_word?("!fatal") == true
-      assert Response.is_status_word?("!re") == true
+      assert Response.status_word?("!done") == true
+      assert Response.status_word?("!trap") == true
+      assert Response.status_word?("!fatal") == true
+      assert Response.status_word?("!re") == true
     end
 
     test "rejects non-status words" do
-      assert Response.is_status_word?("=name=value") == false
-      assert Response.is_status_word?("hello") == false
-      assert Response.is_status_word?("") == false
+      assert Response.status_word?("=name=value") == false
+      assert Response.status_word?("hello") == false
+      assert Response.status_word?("") == false
     end
   end
 

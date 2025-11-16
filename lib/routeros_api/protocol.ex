@@ -116,9 +116,8 @@ defmodule RouterosApi.Protocol do
     len = byte_size(word)
     len_encoded = encode_length(len)
 
-    with :ok <- socket_send(socket, len_encoded),
-         :ok <- socket_send(socket, word) do
-      :ok
+    with :ok <- socket_send(socket, len_encoded) do
+      socket_send(socket, word)
     end
   end
 
@@ -163,9 +162,15 @@ defmodule RouterosApi.Protocol do
   end
 
   # Helper to send data (handles both :gen_tcp and :ssl)
-  defp socket_send({:sslsocket, _, _, _, _, _, _, _} = socket, data), do: :ssl.send(socket, data)
-  defp socket_send({:sslsocket, _, _} = socket, data), do: :ssl.send(socket, data)
-  defp socket_send(socket, data), do: :gen_tcp.send(socket, data)
+  # SSL sockets are tuples starting with :sslsocket
+  defp socket_send({:sslsocket, _, _, _, _, _, _, _} = socket, data) do
+    :ssl.send(socket, data)
+  end
+
+  # TCP sockets are ports
+  defp socket_send(socket, data) when is_port(socket) do
+    :gen_tcp.send(socket, data)
+  end
 
   @doc """
   Reads a sentence from the socket.
@@ -242,7 +247,13 @@ defmodule RouterosApi.Protocol do
   end
 
   # Helper to receive data (handles both :gen_tcp and :ssl)
-  defp recv({:sslsocket, _, _, _, _, _, _, _} = socket, len), do: :ssl.recv(socket, len)
-  defp recv({:sslsocket, _, _} = socket, len), do: :ssl.recv(socket, len)
-  defp recv(socket, len), do: :gen_tcp.recv(socket, len)
+  # SSL sockets are tuples starting with :sslsocket
+  defp recv({:sslsocket, _, _, _, _, _, _, _} = socket, len) do
+    :ssl.recv(socket, len)
+  end
+
+  # TCP sockets are ports
+  defp recv(socket, len) when is_port(socket) do
+    :gen_tcp.recv(socket, len)
+  end
 end

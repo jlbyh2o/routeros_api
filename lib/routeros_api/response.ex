@@ -78,7 +78,7 @@ defmodule RouterosApi.Response do
   @spec parse_sentence([String.t()]) :: map()
   def parse_sentence(words) when is_list(words) do
     words
-    |> Enum.reject(&is_status_word?/1)
+    |> Enum.reject(&status_word?/1)
     |> Enum.map(&parse_attribute/1)
     |> Enum.reject(&is_nil/1)
     |> Map.new()
@@ -146,15 +146,15 @@ defmodule RouterosApi.Response do
 
   ## Examples
 
-      iex> RouterosApi.Response.is_status_word?("!done")
+      iex> RouterosApi.Response.status_word?("!done")
       true
 
-      iex> RouterosApi.Response.is_status_word?("=name=value")
+      iex> RouterosApi.Response.status_word?("=name=value")
       false
   """
-  @spec is_status_word?(String.t()) :: boolean()
-  def is_status_word?("!" <> _), do: true
-  def is_status_word?(_), do: false
+  @spec status_word?(String.t()) :: boolean()
+  def status_word?("!" <> _), do: true
+  def status_word?(_), do: false
 
   ## Private Functions
 
@@ -164,7 +164,7 @@ defmodule RouterosApi.Response do
       sentences
       |> Enum.reverse()
       |> Enum.find(fn sentence ->
-        Enum.any?(sentence, &is_status_word?/1)
+        Enum.any?(sentence, &status_word?/1)
       end)
 
     status = if status_sentence, do: detect_status(status_sentence), else: nil
@@ -173,7 +173,7 @@ defmodule RouterosApi.Response do
     data_sentences =
       Enum.reject(sentences, fn sentence ->
         # Reject if it's ONLY status words (no data attributes)
-        has_status = Enum.any?(sentence, &is_status_word?/1)
+        has_status = Enum.any?(sentence, &status_word?/1)
         has_data = Enum.any?(sentence, &String.starts_with?(&1, "="))
         has_status and not has_data
       end)

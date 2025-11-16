@@ -34,7 +34,7 @@ defmodule RouterosApi.Connection do
   use GenServer
   require Logger
 
-  alias RouterosApi.{Auth, Protocol, Response, Error}
+  alias RouterosApi.{Auth, Error, Protocol, Response}
 
   @default_timeout 5000
   @default_plain_port 8728
@@ -181,7 +181,7 @@ defmodule RouterosApi.Connection do
 
   @impl true
   def terminate(_reason, state) do
-    close_socket(state.socket, state.ssl)
+    _ = close_socket(state.socket, state.ssl)
     :ok
   end
 

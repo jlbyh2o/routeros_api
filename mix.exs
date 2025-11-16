@@ -14,6 +14,7 @@ defmodule RouterosApi.MixProject do
       description: description(),
       package: package(),
       docs: docs(),
+      dialyzer: dialyzer(),
       name: "RouterOS API",
       source_url: @source_url
     ]
@@ -32,7 +33,9 @@ defmodule RouterosApi.MixProject do
     [
       {:nimble_pool, "~> 1.0"},
       {:telemetry, "~> 1.0"},
-      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -62,6 +65,18 @@ defmodule RouterosApi.MixProject do
       extras: ["README.md", "CHANGELOG.md"],
       source_ref: "v#{@version}",
       source_url: @source_url
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+      plt_add_apps: [:ex_unit, :mix],
+      flags: [
+        :unmatched_returns,
+        :error_handling,
+        :underspecs
+      ]
     ]
   end
 end
