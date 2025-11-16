@@ -37,17 +37,19 @@
 - [x] Binary to hex conversion
 - [x] Handle empty salt (newer RouterOS)
 
-### 1.4 Connection Management ⏳
-- [ ] Create `lib/routeros_api/connection.ex`
-- [ ] Define connection state struct
-- [ ] Implement `init/1` (connect + authenticate)
-- [ ] Implement TCP connection
-- [ ] Implement TLS connection
-- [ ] Implement `handle_call({:command, words}, ...)`
-- [ ] Implement `terminate/2`
-- [ ] Add error handling
-- [ ] Add typespecs
-- [ ] Write integration tests
+### 1.4 Connection Management ✅
+- [x] Create `lib/routeros_api/connection.ex`
+- [x] Create `lib/routeros_api/error.ex`
+- [x] Define connection state struct
+- [x] Implement `init/1` (connect + authenticate)
+- [x] Implement TCP connection
+- [x] Implement TLS connection
+- [x] Auto-detect TLS from port
+- [x] Implement `handle_call({:command, words}, ...)`
+- [x] Implement `terminate/2`
+- [x] Add error handling
+- [x] Add typespecs
+- [ ] Write integration tests (deferred - need mock server)
 
 ### 1.5 Response Parsing ⏳
 - [ ] Create `lib/routeros_api/response.ex`
